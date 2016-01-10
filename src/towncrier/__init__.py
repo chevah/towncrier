@@ -67,12 +67,6 @@ def __main(
         'sections': {'': ''},
     }
 
-    try:
-        config = load_config(directory)
-    except ValueError as error:
-        if error.args[0] != 'No config file was loaded.':
-            raise
-
     click.echo("Finding news fragments...")
 
     # TODO make these customisable
@@ -83,7 +77,6 @@ def __main(
         ("removal", ("Deprecations and Removals", True, True)),
         ("misc", ("Misc", False, False)),
     ])
-    package_as_dir = config['package'].replace('.', '/')
 
     fragments = find_fragments(directory, config['sections'])
 
@@ -124,14 +117,8 @@ def __main(
         stage_newsfile(directory, config['filename'])
 
         click.echo("Removing news fragments...")
-        remove_files(
-            directory,
-            config['package_dir'],
-            package_as_dir,
-            config['sections'],
-            fragments,
-            yes,
-            )
+        remove_files(directory, config['package_dir'],
+                     config['package'], config['sections'], fragments, yes)
 
         click.echo("Done!")
 
