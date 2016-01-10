@@ -11,7 +11,6 @@ import sys
 
 from importlib import import_module
 
-from incremental import Version
 
 
 def get_version(package_dir, package):
@@ -43,6 +42,8 @@ def get_version(package_dir, package):
     if isinstance(version, str):
         return version
 
+    # Avoid forcing dependency on incremental.
+    from incremental import Version
     if isinstance(version, Version):
         return version.base()
 
