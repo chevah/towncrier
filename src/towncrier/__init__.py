@@ -32,31 +32,60 @@ def _get_date():
 @click.option('--dir', 'directory', default='.')
 @click.option('--version', 'project_version', default=None)
 @click.option('--date', 'project_date', default=None)
-def _main(draft, directory, project_version, project_date):
-    return __main(draft, directory, project_version, project_date)
+@click.option(
+    '--package', 'package', default=None,
+    help='Name of the package for which to detect the version',
+    )
+@click.option(
+    '--filename', 'filename', default=None,
+    help='Path to the files which is updated.',
+    )
+@click.option(
+    '--yes', 'yes', default=False, flag_value=True,
+    help='Assume fragment files are removed from git.',
+    )
+def _main(
+        draft, directory, project_version, project_date, filename, package,
+        yes):
+    return __main(
+        draft, directory, project_version, project_date, filename, package,
+        yes)
 
 
-def __main(draft, directory, project_version, project_date):
+def __main(
+        draft, directory, project_version, project_date, filename, package, yes
+        ):
     """
     The main entry point.
     """
     directory = os.path.abspath(directory)
-    config = load_config(directory)
+
+    config = {
+        'package': package,
+        'package_dir': '.',
+        'filename': filename,
+        'sections': {'': ''},
+    }
+
+    try:
+        config = load_config(directory)
+    except ValueError as error:
+        if error.args[0] != 'No config file was loaded.':
+            raise
 
     click.echo("Finding news fragments...")
 
     # TODO make these customisable
+    # ('Section Name', include_text, include_ticket)
     definitions = OrderedDict([
-        ("feature", ("Features", True)),
-        ("bugfix", ("Bugfixes", True)),
-        ("doc", ("Improved Documentation", True)),
-        ("removal", ("Deprecations and Removals", True)),
-        ("misc", ("Misc", False)),
+        ("feature", ("New Features", True, False)),
+        ("bugfix", ("Defect Fixes", True, True)),
+        ("removal", ("Deprecations and Removals", True, True)),
+        ("misc", ("Misc", False, False)),
     ])
+    package_as_dir = config['package'].replace('.', '/')
 
-    fragments = find_fragments(
-        os.path.join(directory, config['package_dir'], config['package']),
-        config['sections'])
+    fragments = find_fragments(directory, config['sections'])
 
     click.echo("Rendering news fragments...")
 
@@ -72,13 +101,13 @@ def __main(draft, directory, project_version, project_date):
         os.path.join(directory, config['package_dir']),
         config['package'])
 
-    name_and_version = project_name + " " + project_version
+    name_and_version = "Version " + project_version
 
     if project_date is None:
         project_date = _get_date()
 
     if project_date != "":
-        name_and_version += " (" + project_date + ")"
+        name_and_version += ", " + project_date
 
     if draft:
         click.echo("Draft only -- nothing has been written.")
@@ -95,8 +124,14 @@ def __main(draft, directory, project_version, project_date):
         stage_newsfile(directory, config['filename'])
 
         click.echo("Removing news fragments...")
-        remove_files(directory, config['package_dir'],
-                     config['package'], config['sections'], fragments)
+        remove_files(
+            directory,
+            config['package_dir'],
+            package_as_dir,
+            config['sections'],
+            fragments,
+            yes,
+            )
 
         click.echo("Done!")
 

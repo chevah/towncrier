@@ -6,7 +6,7 @@ from __future__ import absolute_import, division
 import os
 import textwrap
 
-from io import StringIO
+from StringIO import StringIO
 
 
 def normalise(text):
@@ -36,7 +36,7 @@ def find_fragments(base_directory, sections):
 
     for key, val in sections.items():
 
-        section_dir = os.path.join(base_directory, val, "newsfragments")
+        section_dir = os.path.join(base_directory, val, "release-notes")
         files = os.listdir(section_dir)
 
         file_content = {}
@@ -85,7 +85,7 @@ def split_fragments(fragments, definitions):
     return output
 
 
-def render_fragments(fragments, definitions, major=u"-", minor=u"~"):
+def render_fragments(fragments, definitions, major=u"^", minor=u"~"):
     """
     Render the fragments into a news file.
     """
@@ -94,39 +94,43 @@ def render_fragments(fragments, definitions, major=u"-", minor=u"~"):
     for section in sorted(fragments.keys()):
 
         if section:
-            result.write("\n" + section + "\n")
-            result.write(major * len(section) + "\n\n")
+            result.write("\n\n" + section + u"\n\n")
+            result.write(major * len(section) + u"\n\n")
 
         if not fragments[section]:
-            result.write("No significant changes.\n\n")
+            result.write(u"No significant changes.\n\n")
             continue
 
         for category_name, category_info in definitions.items():
 
             desc = category_info[0]
             includes_text = category_info[1]
+            includes_id = category_info[2]
 
             if category_name not in fragments[section]:
                 continue
 
             frags = fragments[section][category_name]
 
-            result.write(desc + "\n")
+            result.write(u"\n" + desc + u"\n")
 
             if not section:
-                result.write(major * len(desc) + "\n\n")
+                result.write(major * len(desc) + u"\n\n")
             else:
-                result.write(minor * len(desc) + "\n\n")
+                result.write(minor * len(desc) + u"\n\n")
 
             if includes_text:
 
                 for text, tickets in sorted(frags.items(),
                                             key=lambda i: i[1][0]):
-                    tickets = ["#" + str(i) for i in tickets]
-                    to_wrap = "- " + text + " (" + ", ".join(tickets) + ")"
+                    to_wrap = "* " + text
+                    if includes_id:
+                        tickets = ["#" + str(i) for i in tickets]
+                        to_wrap += " [" + ", ".join(tickets) + "]"
 
-                    result.write(textwrap.fill(to_wrap,
-                                               subsequent_indent="  ") + "\n")
+                    wrapped_text = textwrap.fill(
+                        to_wrap, width=80, subsequent_indent="  ")
+                    result.write(wrapped_text + "\n")
             else:
 
                 all_tickets = []

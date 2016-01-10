@@ -7,15 +7,15 @@ import os
 import click
 
 
-def remove_files(directory, package_dir, package, sections, fragments):
+def remove_files(directory, package_dir, package, sections, fragments, yes):
 
-    base_dir = os.path.join(directory, package_dir, package)
+    base_dir = directory
 
     to_remove = []
 
     for section_name, categories in fragments.items():
 
-        section_dir = os.path.join(base_dir, "newsfragments",
+        section_dir = os.path.join(base_dir, "release-notes",
                                    sections[section_name])
 
         for category_name, category_items in categories.items():
@@ -32,7 +32,11 @@ def remove_files(directory, package_dir, package, sections, fragments):
     for filename in to_remove:
         click.echo(filename)
 
-    if click.confirm('Is it okay if I remove those files?'):
+    if not yes:
+        # Not yet confirmed.
+        yes = click.confirm('Is it okay if I remove those files?')
+
+    if yes:
         call(["git", "rm", "--quiet"] + to_remove)
 
 
