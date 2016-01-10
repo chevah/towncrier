@@ -24,19 +24,24 @@ def append_to_newsfile(directory, filename, name_and_version, content):
         with open(news_file, "r") as f:
             existing_content = f.read()
 
-    existing_content = existing_content.split(TOWNCRIER_START)
+    top_line = name_and_version + "\n" + "-" * len(name_and_version) + "\n\n"
 
-    top_line = name_and_version + "\n" + "=" * len(name_and_version) + "\n\n"
-
-    if top_line in existing_content:
+    latest_version = name_and_version.split(',', 1)[0]
+    if latest_version in existing_content:
         raise ValueError(
             "It seems you've already produced newsfiles for this version?")
+
+    # existing_content = existing_content.split(TOWNCRIER_START)
+    last_version = existing_content.find('\n\nVersion ')
+    existing_content = [
+        existing_content[:last_version],
+        existing_content[last_version:],
+        ]
 
     with open(os.path.join(directory, filename), "w") as f:
 
         if len(existing_content) > 1:
-            f.write(existing_content.pop(0).rstrip())
-            f.write("\n\n" + TOWNCRIER_START + "\n")
+            f.write(existing_content.pop(0) + '\n\n')
 
         f.write(top_line)
         f.write(content)
