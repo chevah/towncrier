@@ -76,6 +76,7 @@ def __main(
         ("bugfix", ("Defect Fixes", True, True)),
         ("removal", ("Deprecations and Removals", True, True)),
         ("misc", ("Misc", False, False)),
+        ("ignore", ("", False, False)),
     ])
 
     fragments = find_fragments(directory, config['sections'])

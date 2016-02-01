@@ -107,6 +107,10 @@ def render_fragments(fragments, definitions, major=u"^", minor=u"~"):
             includes_text = category_info[1]
             includes_id = category_info[2]
 
+            if not desc:
+                # Ignore this category.
+                continue
+
             if category_name not in fragments[section]:
                 continue
 
