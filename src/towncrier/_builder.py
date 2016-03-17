@@ -70,7 +70,6 @@ def split_fragments(fragments, definitions):
             if category not in definitions:
                 continue
 
-            ticket = int(ticket)
             texts = section.get(category, {})
 
             if texts.get(content):
@@ -133,7 +132,11 @@ def render_fragments(fragments, definitions, major=u"^", minor=u"~"):
                         to_wrap += " [" + ", ".join(tickets) + "]"
 
                     wrapped_text = textwrap.fill(
-                        to_wrap, width=80, subsequent_indent="  ")
+                        to_wrap,
+                        width=79,
+                        subsequent_indent="  ",
+                        break_on_hyphens=False,
+                        )
                     result.write(wrapped_text + "\n")
             else:
 
