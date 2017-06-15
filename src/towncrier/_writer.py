@@ -26,7 +26,7 @@ def append_to_newsfile(directory, filename, name_and_version, content):
 
     top_line = name_and_version + "\n" + "-" * len(name_and_version) + "\n\n"
 
-    latest_version = name_and_version.split(',', 1)[0]
+    latest_version = name_and_version.split(',', 1)[0].encode('utf-8')
     if latest_version in existing_content:
         raise ValueError(
             "It seems you've already produced newsfiles for this version?")

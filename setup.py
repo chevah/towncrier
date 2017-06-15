@@ -20,7 +20,7 @@ setup(
         "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
     ],
-    version='16.0.0.chevah5',
+    version='16.0.0.chevah6',
     #setup_requires=['incremental'],
     install_requires=[
         'Click',
