@@ -95,7 +95,7 @@ def __main(draft, directory, project_version, project_date, answer_yes):
         version=project_version,
         project_date=project_date
     )
-    top_line += u"\n" + (config['underlines'][0] * len(top_line)) + u"\n"
+    top_line += u"\n" + (config['underlines'][0] * len(top_line)) + u"\n\n"
 
     if draft:
         click.echo(
@@ -103,8 +103,8 @@ def __main(draft, directory, project_version, project_date, answer_yes):
             "What is seen below is what would be written.\n",
             err=to_err,
         )
-        click.echo(top_line, err=to_err)
-        click.echo(rendered)
+        click.echo(top_line, err=to_err, nl=False)
+        click.echo(rendered, nl=False)
     else:
         click.echo("Writing to newsfile...", err=to_err)
         start_line = config['start_line']
