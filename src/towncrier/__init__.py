@@ -108,8 +108,14 @@ def __main(draft, directory, project_version, project_date, answer_yes):
     else:
         click.echo("Writing to newsfile...", err=to_err)
         start_line = config['start_line']
-        append_to_newsfile(directory, config['filename'],
-                           start_line, top_line, rendered)
+        append_to_newsfile(
+            directory,
+            config['filename'],
+            project_version,
+            start_line,
+            top_line,
+            rendered,
+            )
 
         click.echo("Staging newsfile...", err=to_err)
         stage_newsfile(directory, config['filename'])

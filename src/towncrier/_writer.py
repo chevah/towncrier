@@ -11,7 +11,8 @@ from __future__ import absolute_import, division
 import os
 
 
-def append_to_newsfile(directory, filename, start_line, top_line, content):
+def append_to_newsfile(
+        directory, filename, project_version, start_line, top_line, content):
 
     news_file = os.path.join(directory, filename)
 
@@ -23,7 +24,7 @@ def append_to_newsfile(directory, filename, start_line, top_line, content):
 
     existing_content = existing_content.split(start_line, 1)
 
-    if top_line in existing_content:
+    if project_version in existing_content[1]:
         raise ValueError(
             "It seems you've already produced newsfiles for this version?")
 
