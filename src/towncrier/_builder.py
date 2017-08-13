@@ -135,6 +135,11 @@ def render_fragments(
 
         data[section_name] = OrderedDict()
 
+        # Initialize each category so that in the template we don't need
+        # to do extra logic to check for missing categories.
+        for category_name in definitions.keys():
+            data[section_name][category_name] = OrderedDict()
+
         for category_name, category_value in section_value.items():
             # Suppose we start with an ordering like this:
             #

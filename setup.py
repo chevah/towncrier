@@ -22,7 +22,7 @@ setup(
         "Programming Language :: Python :: 3.5",
     ],
     # We just used simple versioning.
-    version='17.4.0.chevah1',
+    version='17.4.0.chevah2',
     # use_incremental=True,
     # setup_requires=['incremental'],
     install_requires=[
